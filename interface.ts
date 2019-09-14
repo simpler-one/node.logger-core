@@ -24,4 +24,6 @@ export interface Log<M, O> {
     optional: O[];
 }
 
+export interface StrLog<O> extends Log<string, O> { }
+
 export type LogRewrite<M, O> = (log: Log<M, O>) => void;
