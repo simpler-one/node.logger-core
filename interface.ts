@@ -12,7 +12,7 @@ export interface Logger<M = {}, O = {}> {
     debug(message: M, ...optional: O[]): void;
 }
 export namespace Logger {
-    log<M, O>(logger: Logger<M, O>, level: LogLevel, message: M, ...optional: O[]): void {
+    function log<M, O>(logger: Logger<M, O>, level: LogLevel, message: M, ...optional: O[]): void {
         logger[level].call(logger, message, ...optional);
     }
 }
@@ -25,10 +25,3 @@ export interface Log<M, O> {
 }
 
 export type LogRewrite<M, O> = (log: Log<M, O>) => void;
-
-export abstract class RewritingLogger<M, O> implements Logger<M, O> {
-    
-}
-
-
-
