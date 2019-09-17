@@ -17,8 +17,8 @@ export namespace Logger {
     }
 }
 
-export interface GenericLogger<L> {
-    log(level: LogLevel, log: L): void;
+export interface LogStream<L> {
+    write(level: LogLevel, log: L): void;
 }
 
 export interface Log<C = string, O = {}> {
