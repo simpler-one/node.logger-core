@@ -15,8 +15,9 @@ export enum LogLevel {
 }
 
 export interface LogHeader {
+    time?: Date;
     level: LogLevel;
-    tags: string[];
+    tags?: string[];
 }
 
 export interface Log<T> {

@@ -18,7 +18,8 @@ class TaggedLogStream<T> extends LogStream<T> {
     }
 
     public write(log: Log<T>): void {
-        log.header.tags = [...log.header.tags, ...this.tags];
+        const orgTags = log.header.tags ? log.header.tags : [];
+        log.header.tags = [...orgTags, ...this.tags];
         this.stream.write(log);
     }
 }
