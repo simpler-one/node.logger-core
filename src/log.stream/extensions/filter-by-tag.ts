@@ -20,12 +20,13 @@ declare module '../log.stream' {
 }
 
 
-class TagFilteredLogStream<T> implements LogInputStream<T> {
+class TagFilteredLogStream<T> extends LogStream<T> {
     constructor(
-        private readonly stream: LogInputStream<T>,
+        stream: LogInputStream<T>,
         private readonly tags: string[],
         private readonly removeTags: boolean,
     ) {
+        super(stream);
     }
 
     public write(log: Log<T>): void {
@@ -63,5 +64,5 @@ LogStream.prototype.filterByTag = function<T>(...params: (boolean | string)[]): 
         params.shift();
     }
 
-    return new LogStream(new TagFilteredLogStream(this.stream, params as string[], removeTags));
+    return new TagFilteredLogStream(this.shorterStream, params as string[], removeTags);
 }

@@ -9,11 +9,12 @@ declare module '../log.stream' {
 }
 
 
-class TaggedLogStream<T> implements LogInputStream<T> {
+class TaggedLogStream<T> extends LogStream<T> {
     constructor(
-        private readonly stream: LogInputStream<T>,
+        stream: LogInputStream<T>,
         private readonly tags: string[],
     ) {
+        super(stream);
     }
 
     public write(log: Log<T>): void {
@@ -25,5 +26,5 @@ class TaggedLogStream<T> implements LogInputStream<T> {
 
 
 LogStream.prototype.tag = function<T>(tags: string[]): LogStream<T> {
-    return new LogStream(new TaggedLogStream(this.stream, tags));
+    return new TaggedLogStream(this.shorterStream, tags);
 }

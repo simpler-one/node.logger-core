@@ -26,7 +26,7 @@ declare module '../log.stream' {
 }
 
 
-class SkippedLogStream<T> implements LogInputStream<T> {
+class SkippedLogStream<T> extends LogStream<T> {
     private skipCount: number = 0;
     private get skipping(): boolean {
         return this.skipCount > 0;
@@ -35,12 +35,13 @@ class SkippedLogStream<T> implements LogInputStream<T> {
     private readonly histories: Log<T>[] = [];
 
     constructor(
-        private readonly stream: LogInputStream<T>,
+        stream: LogInputStream<T>,
         private readonly filter: Filter<T>,
         private readonly bufferSize: number,
         private readonly onStartSkip?: () => Log<T>,
         private readonly onFinishSkip?: (params: SkipFinishedParam<T>) => Log<T>
     ) {
+        super(stream);
     }
 
     public write(log: Log<T>): void {
@@ -73,5 +74,5 @@ LogStream.prototype.skip = function<T>(
     onStartSkip?: () => Log<T>,
     onFinishSkip?: (params: SkipFinishedParam<T>) => Log<T>,
 ): LogStream<T> {
-    return new LogStream(new SkippedLogStream(this.stream, filter, bufferSize, onStartSkip, onFinishSkip));
+    return new SkippedLogStream(this.shorterStream, filter, bufferSize, onStartSkip, onFinishSkip);
 }

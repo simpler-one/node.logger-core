@@ -24,5 +24,5 @@ class MappedLogStream<T, U> implements LogInputStream<T> {
 
 
 LogStream.prototype.map = function<T, U>(mapping: Mapping<U, T>): LogStream<U> {
-    return new LogStream(new MappedLogStream(this.stream, mapping));
+    return new LogStream(new MappedLogStream(this.shorterStream, mapping));
 }
