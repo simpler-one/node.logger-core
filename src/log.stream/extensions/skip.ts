@@ -71,7 +71,7 @@ LogStream.prototype.skip = function<T>(
     filter: Filter<T>,
     bufferSize?: number,
     onStartSkip?: () => Log<T>,
-    onFinishSkip?: (params: SkipFinishedParam) => Log<T>,
+    onFinishSkip?: (params: SkipFinishedParam<T>) => Log<T>,
 ): LogStream<T> {
     return new LogStream(new SkippedLogStream(this.stream, filter, bufferSize, onStartSkip, onFinishSkip));
 }
