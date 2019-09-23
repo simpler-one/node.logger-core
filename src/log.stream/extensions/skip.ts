@@ -2,17 +2,25 @@ import { LogInputStream, Log } from '../../interface';
 import { LogStream } from '../log.stream';
 
 type Filter<T> = (log: Log<T>, histories: Log<T>[]) => boolean;
-interface SkipFinishedParam {
+interface SkipFinishedParam<T> {
     skipCount: number;
+    histories: Log<T>[];
 }
 
 declare module '../log.stream' {
     interface LogStream<T> {
+        /**
+         * Skip filtered log.
+         * @param filter filter to skip.
+         * @param bufferSize history buffer size for filter callback
+         * @param onStartSkip log generator at starting skip
+         * @param onFinishSkip log generator at finishing skip
+         */
         skip(
             filter: Filter<T>,
             bufferSize?: number,
             onStartSkip?: () => Log<T>,
-            onFinishSkip?: (params: SkipFinishedParam) => Log<T>,
+            onFinishSkip?: (params: SkipFinishedParam<T>) => Log<T>,
         ): LogStream<T>;
     }
 }
@@ -31,7 +39,7 @@ class SkippedLogStream<T> implements LogInputStream<T> {
         private readonly filter: Filter<T>,
         private readonly bufferSize: number,
         private readonly onStartSkip?: () => Log<T>,
-        private readonly onFinishSkip?: (params: SkipFinishedParam) => Log<T>
+        private readonly onFinishSkip?: (params: SkipFinishedParam<T>) => Log<T>
     ) {
     }
 
@@ -44,7 +52,7 @@ class SkippedLogStream<T> implements LogInputStream<T> {
             this.skipCount++;
         } else {
             if (this.skipping && this.onFinishSkip) {
-                this.stream.write(this.onFinishSkip({ skipCount: this.skipCount }));
+                this.stream.write(this.onFinishSkip({ skipCount: this.skipCount, histories: [...this.histories] }));
             }
 
             this.stream.write(log);
