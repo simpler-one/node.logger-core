@@ -1,14 +1,14 @@
-import { LogInputStream, Log } from '../../interface';
+import { LogInputStream, Log, LogHeader } from '../../interface';
 import { LogStream } from '../log.stream';
 
-type Filter<T> = (log: Log<T>, histories: Log<T>[]) => boolean;
-interface SkipFinishedParam<T> {
+type Filter<B, H extends LogHeader> = (log: Log<B, H>, histories: Log<B, H>[]) => boolean;
+interface SkipFinishedParam<B, H extends LogHeader> {
     skipCount: number;
-    histories: Log<T>[];
+    histories: Log<B, H>[];
 }
 
 declare module '../log.stream' {
-    interface LogStream<T> {
+    interface LogStream<B, H> {
         /**
          * Skip filtered log.
          * @param filter filter to skip.
@@ -17,34 +17,34 @@ declare module '../log.stream' {
          * @param onFinishSkip log generator at finishing skip
          */
         skip(
-            filter: Filter<T>,
+            filter: Filter<B, H>,
             bufferSize?: number,
-            onStartSkip?: () => Log<T>,
-            onFinishSkip?: (params: SkipFinishedParam<T>) => Log<T>,
-        ): LogStream<T>;
+            onStartSkip?: () => Log<B, H>,
+            onFinishSkip?: (params: SkipFinishedParam<B, H>) => Log<B, H>,
+        ): LogStream<B, H>;
     }
 }
 
 
-class SkippedLogStream<T> extends LogStream<T> {
+class SkippedLogStream<B, H extends LogHeader> extends LogStream<B, H> {
     private skipCount: number = 0;
     private get skipping(): boolean {
         return this.skipCount > 0;
     }
 
-    private readonly histories: Log<T>[] = [];
+    private readonly histories: Log<B, H>[] = [];
 
     constructor(
-        stream: LogInputStream<T>,
-        private readonly filter: Filter<T>,
+        stream: LogInputStream<B, H>,
+        private readonly filter: Filter<B, H>,
         private readonly bufferSize: number,
-        private readonly onStartSkip?: () => Log<T>,
-        private readonly onFinishSkip?: (params: SkipFinishedParam<T>) => Log<T>
+        private readonly onStartSkip?: () => Log<B, H>,
+        private readonly onFinishSkip?: (params: SkipFinishedParam<B, H>) => Log<B, H>
     ) {
         super(stream);
     }
 
-    public write(log: Log<T>): void {
+    public write(log: Log<B, H>): void {
         if (this.filter(log, [...this.histories])) {
             if (!this.skipping && this.onStartSkip) {
                 this.stream.write(this.onStartSkip());
@@ -68,11 +68,11 @@ class SkippedLogStream<T> extends LogStream<T> {
 }
 
 
-LogStream.prototype.skip = function<T>(
-    filter: Filter<T>,
+LogStream.prototype.skip = function<B, H extends LogHeader>(
+    filter: Filter<B, H>,
     bufferSize?: number,
-    onStartSkip?: () => Log<T>,
-    onFinishSkip?: (params: SkipFinishedParam<T>) => Log<T>,
-): LogStream<T> {
+    onStartSkip?: () => Log<B, H>,
+    onFinishSkip?: (params: SkipFinishedParam<B, H>) => Log<B, H>,
+): LogStream<B> {
     return new SkippedLogStream(this.shorterStream, filter, bufferSize, onStartSkip, onFinishSkip);
 }

@@ -3,7 +3,7 @@ import { LogStream } from '../log.stream';
 
 
 declare module '../log.stream' {
-    interface LogStream<B, H extends LogHeader> {
+    interface LogStream<B, H> {
         /**
          * Filter by tag.
          * And remove tags to filter.
@@ -20,7 +20,7 @@ declare module '../log.stream' {
 }
 
 
-class TagFilteredLogStream<B, H> extends LogStream<B, H> {
+class TagFilteredLogStream<B, H extends LogHeader> extends LogStream<B, H> {
     constructor(
         stream: LogInputStream<B, H>,
         private readonly tags: string[],
@@ -57,7 +57,7 @@ class TagFilteredLogStream<B, H> extends LogStream<B, H> {
 }
 
 
-LogStream.prototype.filterByTag = function<B, H>(...params: (boolean | string)[]): LogStream<B, H> {
+LogStream.prototype.filterByTag = function<B, H extends LogHeader>(...params: (boolean | string)[]): LogStream<B, H> {
     let removeTags = true;
     if (typeof params[0] === 'boolean') {
         removeTags = params[0];

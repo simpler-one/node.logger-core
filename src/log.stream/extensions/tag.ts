@@ -1,23 +1,23 @@
-import { LogInputStream, Log } from '../../interface';
+import { LogInputStream, Log, LogHeader } from '../../interface';
 import { LogStream } from '../log.stream';
 
 
 declare module '../log.stream' {
-    interface LogStream<T> {
-        tag(tags: string[]): LogStream<T>;
+    interface LogStream<B, H> {
+        tag(tags: string[]): LogStream<B, H>;
     }
 }
 
 
-class TaggedLogStream<T> extends LogStream<T> {
+class TaggedLogStream<B, H extends LogHeader> extends LogStream<B, H> {
     constructor(
-        stream: LogInputStream<T>,
+        stream: LogInputStream<B, H>,
         private readonly tags: string[],
     ) {
         super(stream);
     }
 
-    public write(log: Log<T>): void {
+    public write(log: Log<B, H>): void {
         const orgTags = log.header.tags ? log.header.tags : [];
         log.header.tags = [...orgTags, ...this.tags];
         this.stream.write(log);
@@ -25,6 +25,6 @@ class TaggedLogStream<T> extends LogStream<T> {
 }
 
 
-LogStream.prototype.tag = function<T>(tags: string[]): LogStream<T> {
+LogStream.prototype.tag = function<B, H extends LogHeader>(tags: string[]): LogStream<B, H> {
     return new TaggedLogStream(this.shorterStream, tags);
 }

@@ -1,28 +1,28 @@
-import { LogInputStream, Log } from '../../interface';
+import { LogInputStream, Log, LogHeader } from '../../interface';
 import { LogStream } from '../log.stream';
 
-type Mapping<I, O> = (log: Log<I>) => Log<O>;
+type Mapping<I, O, H extends LogHeader> = (log: Log<I, H>) => Log<O, H>;
 
 declare module '../log.stream' {
-    interface LogStream<T> {
-        map<U>(mapping: Mapping<U, T>): LogStream<U>;
+    interface LogStream<B, H> {
+        map<B2>(mapping: Mapping<B2, B, H>): LogStream<B2, H>;
     }
 }
 
 
-class MappedLogStream<T, U> implements LogInputStream<T> {
+class MappedLogStream<BI, BO, H extends LogHeader> implements LogInputStream<BI, H> {
     constructor(
-        private readonly stream: LogInputStream<U>,
-        private readonly mapping: Mapping<T, U>,
+        private readonly stream: LogInputStream<BO>,
+        private readonly mapping: Mapping<BI, BO, H>,
     ) {
     }
 
-    public write(log: Log<T>): void {
+    public write(log: Log<BI, H>): void {
         this.stream.write(this.mapping(log));
     }
 }
 
 
-LogStream.prototype.map = function<T, U>(mapping: Mapping<U, T>): LogStream<U> {
+LogStream.prototype.map = function<B, B2, H extends LogHeader>(mapping: Mapping<B2, B, H>): LogStream<B2, H> {
     return new LogStream(new MappedLogStream(this.shorterStream, mapping));
 }
