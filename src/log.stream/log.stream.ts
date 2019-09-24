@@ -1,7 +1,7 @@
 import { LogInputStream, Log, LogHeader } from "../interface";
 
 
-export class LogStream<B, H expands LogHeader> implements LogInputStream<T> {
+export class LogStream<B, H extends LogHeader> implements LogInputStream<T> {
     /** Shorter stream */
     get shorterStream(): LogInputStream<B, H> {
         return this.constructor === LogStream ? this.stream : this;
