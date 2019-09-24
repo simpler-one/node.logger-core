@@ -1,18 +1,18 @@
-import { LogInputStream, Log } from "../interface";
+import { LogInputStream, Log, LogHeader } from "../interface";
 
 
-export class LogStream<T> implements LogInputStream<T> {
+export class LogStream<B, H expands LogHeader> implements LogInputStream<T> {
     /** Shorter stream */
-    get shorterStream(): LogInputStream<T> {
+    get shorterStream(): LogInputStream<B, H> {
         return this.constructor === LogStream ? this.stream : this;
     }
 
     constructor(
-        protected readonly stream: LogInputStream<T>,
+        protected readonly stream: LogInputStream<B, H>,
     ) {
     }
 
-    public write(log: Log<T>): void {
+    public write(log: Log<B, H>): void {
         this.stream.write(log);
     }
 }
