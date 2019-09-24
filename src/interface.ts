@@ -22,7 +22,7 @@ export interface LogHeader {
 
 export interface Log<B, H extends LogHeader = LogHeader> {
     header: H;
-    body: T;
+    body: B;
 }
 
 export interface LogBody<C, O> {
@@ -30,6 +30,6 @@ export interface LogBody<C, O> {
     optional: O[];
 }
 
-export interface LogInputStream<T> {
-    write(log: Log<T>): void;
+export interface LogInputStream<B, H extends LogHeader = LogHeader> {
+    write(log: Log<B, H>): void;
 }
