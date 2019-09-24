@@ -20,8 +20,8 @@ export interface LogHeader {
     tags?: string[];
 }
 
-export interface Log<T> {
-    header: LogHeader;
+export interface Log<B, H extends LogHeader = LogHeader> {
+    header: H;
     body: T;
 }
 
