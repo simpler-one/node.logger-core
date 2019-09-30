@@ -12,7 +12,8 @@ export class LoggerStreamAdapter<C, O> implements LogInputStream<LogBody<C, O>> 
             [LogLevel.Error, logger.error.bind(logger)],
             [LogLevel.Warn, logger.warn.bind(logger)],
             [LogLevel.Info, logger.info.bind(logger)],
-
+            [LogLevel.Debug, logger.debug.bind(logger)],
+            [LogLevel.Trace, logger.trace.bind(logger)],
         ]));
     }
 
