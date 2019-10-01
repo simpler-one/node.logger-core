@@ -1,8 +1,22 @@
-export interface Logger<C = string, O = {}> {
-    error(content: C, ...optional: O[]): void;
-    warn(content: C, ...optional: O[]): void;
-    info(content: C, ...optional: O[]): void;
-    debug(content: C, ...optional: O[]): void;
+export type Logging<C, O> = (content: C, ...optional: O[]): void;
+
+export interface MinimumLogger<C = string, O = {}> {
+    readonly error: Logging<C, O>;
+    readonly info: Logging<C, O>;
+}
+export interface NormalLogger<C = string, O = {}> extends MinimumLogger<C, O> {
+    readonly error: Logging<C, O>;
+    readonly warn: Logging<C, O>;
+    readonly info: Logging<C, O>;
+    readonly debug: Logging<C, O>;
+}
+export interface FullLogger<C = string, O = {}> extends NormalLogger<C, O> {
+    readonly fatal: Logging<C, O>;
+    readonly error: Logging<C, O>;
+    readonly warn: Logging<C, O>;
+    readonly info: Logging<C, O>;
+    readonly debug: Logging<C, O>;
+    readonly trace: Logging<C, O>;
 }
 
 export enum LogLevel {
