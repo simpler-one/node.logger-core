@@ -1,4 +1,5 @@
 export type Logging<C, O> = (content: C, ...optional: O[]): void;
+export type SingleLogging<T> = (log: T): void;
 
 export interface MinimumLogger<C = string, O = {}> {
     readonly error: Logging<C, O>;
@@ -18,6 +19,18 @@ export interface FullLogger<C = string, O = {}> extends NormalLogger<C, O> {
     readonly debug: Logging<C, O>;
     readonly trace: Logging<C, O>;
 }
+
+
+
+export interface SingleFullLogger<T = string> extends SingleNormalLogger<T> {
+    readonly fatal: SingleLogging<T>;
+    readonly error: SingleLogging<T>;
+    readonly warn: SingleLogging<T>;
+    readonly info: SingleLogging<T>;
+    readonly debug: SingleLogging<T>;
+    readonly trace: SingleLogging<T>;
+}
+
 
 export enum LogLevel {
     Fatal,
