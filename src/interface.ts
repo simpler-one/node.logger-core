@@ -20,9 +20,17 @@ export interface FullLogger<C = string, O = {}> extends NormalLogger<C, O> {
     readonly trace: Logging<C, O>;
 }
 
-
-
-export interface SingleFullLogger<T = string> extends SingleNormalLogger<T> {
+export interface MinimumSingleLogger<T = string> {
+    readonly error: SingleLogging<T>;
+    readonly info: SingleLogging<T>;
+}
+export interface NormalSingleLogger<T = string> extends MinimumSingleLogger<T> {
+    readonly error: SingleLogging<T>;
+    readonly warn: SingleLogging<T>;
+    readonly info: SingleLogging<T>;
+    readonly debug: SingleLogging<T>;
+}
+export interface FullSingleLogger<T = string> extends NormalSingleLogger<T> {
     readonly fatal: SingleLogging<T>;
     readonly error: SingleLogging<T>;
     readonly warn: SingleLogging<T>;
